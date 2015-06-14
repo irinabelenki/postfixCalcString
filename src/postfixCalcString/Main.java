@@ -2,9 +2,6 @@ package postfixCalcString;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
 import java.util.Stack;
 import java.util.StringTokenizer;
 
@@ -15,15 +12,10 @@ public class Main {
 		System.out.println("Enter line in postfix format");
 		try {
 			String line = new BufferedReader(new InputStreamReader(System.in)).readLine();
-			StringTokenizer st = new StringTokenizer(line);
-			List<String> elementsList = new ArrayList<String>();
-            while (st.hasMoreTokens()) {
-            	elementsList.add(st.nextToken());
-            }
-            Iterator<String> it = elementsList.iterator();
+			StringTokenizer elementsList = new StringTokenizer(line);
 			
-			while (it.hasNext()) {
-				String element = it.next();
+			while (elementsList.hasMoreTokens()) {
+				String element = elementsList.nextToken();
 				boolean operandFound = false;
 				boolean operationFound = false;
 				try {
@@ -32,14 +24,11 @@ public class Main {
 					operandFound = true;
 					continue;
 				} catch (NumberFormatException nfe) {
-					operandFound = false;
 				}
 				
 				String operation = element;
 				if (containsOperation(operation)) {
 					operationFound = true;
-				} else {
-					operationFound = false;
 				}
 
 				if (!operandFound && !operationFound) {
