@@ -8,22 +8,7 @@ import java.util.StringTokenizer;
 public class Main {
 	private static Stack<Integer> operandStack = new Stack<Integer>();	
 	
-	public enum Operation {		 
-		PLUS("+"), 
-		MINUS("-"), 
-		MULTIPLY("*"), 
-		DIVIDE("/");
-	 
-		private String content;
-	 
-		private Operation(String content) {
-			this.content = content;
-		}
-	 
-		public String getContent() {
-			return content;
-		}	 
-	}
+	public enum OPERATION { ADD, SUBTRACT, MULTIPLY, DIVIDE, ILLEGAL_OPERATION };
 
 	public static void main(String[] args) {
 		System.out.println("Enter line in postfix format");
@@ -41,11 +26,8 @@ public class Main {
 				} catch (NumberFormatException nfe) {
 				}
 				
-				if (!containsOperation(element)) {
-					System.out.println("Invalid character: " + element);
-					break;
-				}
-
+				OPERATION operation = getOperation(element);
+				
 				if (operandStack.size() < 2) {
 					System.out.println("Number of operands less than two");
 					break;
@@ -53,40 +35,52 @@ public class Main {
 
 				int result = 0;
 				int secondOperand = 0;
-				if (element.equals("+")) {
-					result = operandStack.pop() + operandStack.pop();
-				}
-				else if(element.equals("*")) {
-					result = operandStack.pop() * operandStack.pop();
-				}
-				else if(element.equals("-")) {
-					secondOperand = operandStack.pop();
-					result = operandStack.pop() - secondOperand;
-				}
-				else if(element.equals("/")) {
-					secondOperand = operandStack.pop();
-					if (secondOperand == 0) {
-						System.err.println("Cannot divide by zero");
+				switch(operation) {
+					case ADD:
+						result = operandStack.pop() + operandStack.pop();
 						break;
-					}
-					result = operandStack.pop() / secondOperand;
+					case MULTIPLY:
+						result = operandStack.pop() * operandStack.pop();
+						break;
+					case SUBTRACT:
+						secondOperand = operandStack.pop();
+						result = operandStack.pop() - secondOperand;
+						break;
+					case DIVIDE:
+						secondOperand = operandStack.pop();
+						if (secondOperand == 0) {
+							throw new Exception("Cannot divide by zero");
+						}
+						result = operandStack.pop() / secondOperand;
+						break;
+					case ILLEGAL_OPERATION:
+						throw new Exception("Illegal operaton: " + element);
+						
 				}
+
 				operandStack.push(result);
 				System.out.println("Result: " + result);
 			}
 		} 
 		catch (Exception e) {
-			System.err.println("Exception:" + e.getMessage());
+			System.err.println("Exception: " + e.getMessage());
 		}
 	}
 
-	public static boolean containsOperation(String operation) {
-		for(Operation value : Operation.values()) {
-			if (value.getContent().equals(operation)) {
-				return true;
-			}
+	public static OPERATION getOperation(String operation) {
+		if(operation.equals("+")) {
+			return OPERATION.ADD;
 		}
-		return false;
+		else if(operation.equals("-")) {
+			return OPERATION.SUBTRACT;
+		}
+		else if(operation.equals("*")) {
+			return OPERATION.MULTIPLY;
+		}
+		else if(operation.equals("/")) {
+			return OPERATION.DIVIDE;
+		}
+		return OPERATION.ILLEGAL_OPERATION;
 	}
 
 }
